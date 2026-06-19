@@ -126,9 +126,7 @@ HTML_PAGE = """<!DOCTYPE html>
 </div>
 <div id="join">
   <div class="ascii">═══════════════════════════
-  ENCRYPTED RELAY // NODE ACTIVE
 ═══════════════════════════</div>
-  <label>IDENTIFY YOURSELF</label>
   <input id="nameInput" placeholder="enter name..." maxlength="32" autocomplete="off">
   <button onclick="joinChat()">&gt; CONNECT</button>
 </div>
@@ -151,7 +149,7 @@ function joinChat() {
   username = n;
   document.getElementById("join").style.display = "none";
   document.getElementById("chat").style.display = "flex";
-  document.getElementById("status").textContent = "● LINK ESTABLISHED // " + username.toUpperCase();
+  document.getElementById("status").textContent = username.toUpperCase();
   document.getElementById("status").className = "on";
   document.getElementById("msgInput").focus();
   fetch("/send", {method:"POST", headers:{"Content-Type":"application/json"},
