@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: simple-chat
+    runtime: python
+    plan: free
+    buildCommand: "echo 'no deps needed'"
+    startCommand: "python app.py"
