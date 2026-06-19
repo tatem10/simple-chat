@@ -121,7 +121,7 @@ HTML_PAGE = """<!DOCTYPE html>
 </head>
 <body>
 <div id="header">
-  <h1>[ SECURE_CHANNEL<span class="blink">_</span> ]</h1>
+  <h1>[ CHANNEL<span class="blink">_</span> ]</h1>
   <span id="status">○ OFFLINE</span>
 </div>
 <div id="join">
