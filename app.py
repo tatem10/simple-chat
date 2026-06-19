@@ -32,7 +32,7 @@ HTML_PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SECURE_CHANNEL</title>
+<title>CHANNEL</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -129,14 +129,14 @@ HTML_PAGE = """<!DOCTYPE html>
   ENCRYPTED RELAY // NODE ACTIVE
 ═══════════════════════════</div>
   <label>IDENTIFY YOURSELF</label>
-  <input id="nameInput" placeholder="enter codename..." maxlength="32" autocomplete="off">
+  <input id="nameInput" placeholder="enter name..." maxlength="32" autocomplete="off">
   <button onclick="joinChat()">&gt; CONNECT</button>
 </div>
 <div id="chat">
   <div id="messages"></div>
   <div id="inputbar">
     <span class="prompt">&gt;</span>
-    <input id="msgInput" placeholder="transmit message..." autocomplete="off" autocorrect="off">
+    <input id="msgInput" placeholder="..." autocomplete="off" autocorrect="off">
     <button onclick="sendMsg()">SEND</button>
   </div>
 </div>
