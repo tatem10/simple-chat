@@ -32,18 +32,18 @@ HTML_PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>THE_MATRIX // CHAT</title>
+<title>TERMINAL // CHAT</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #000000; --panel: #050a05; --accent: #00ff41;
-    --dim: #0d1f0d; --text: #aaffaa; --muted: #2f7a3f;
-    --bright: #ccffcc; --entry: #050a05; --border: #134d13;
-    --server: #ffcc66; --warn: #ff3344;
+    --bg: #000000; --panel: #060a06; --accent: #2e8b3e;
+    --dim: #0d1f0d; --text: #6fae6f; --muted: #2a5c2a;
+    --bright: #9fd99f; --entry: #060a06; --border: #14361a;
+    --server: #c9a85a; --warn: #b94b4b;
   }
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
   html, body { background: var(--bg); color: var(--text);
-         font-family: 'Share Tech Mono', 'Courier New', monospace;
+         font-family: 'VT323', 'Courier New', monospace;
          height: 100dvh; width: 100%; overflow: hidden; }
   body { display: flex; flex-direction: column; position: relative; }
 
@@ -58,39 +58,40 @@ HTML_PAGE = """<!DOCTYPE html>
                     background: rgba(0,0,0,0.55); padding: 32px 28px;
                     border: 1px solid var(--border); backdrop-filter: blur(1px); }
   #join .ascii { color: var(--accent); font-size: 11px; line-height: 1.3;
+
                  white-space: pre; text-align: center;
-                 text-shadow: 0 0 8px rgba(0,255,65,0.8); }
-  #join label { color: var(--muted); font-size: 12px; text-transform: uppercase;
+                 text-shadow: 0 0 8px rgba(46,139,62,0.8); }
+  #join label { color: var(--muted); font-size: 18px; text-transform: uppercase;
                 letter-spacing: 3px; align-self: flex-start; }
   #join input { width: 280px; padding: 12px 14px;
                 background: rgba(0,0,0,0.6); border: 1px solid var(--accent);
-                color: var(--bright); font-size: 15px; outline: none;
+                color: var(--bright); font-size: 22px; outline: none;
                 font-family: inherit; caret-color: var(--accent);
-                text-shadow: 0 0 4px rgba(0,255,65,0.6); }
-  #join input:focus { box-shadow: 0 0 12px rgba(0,255,65,0.5); }
+                text-shadow: 0 0 4px rgba(46,139,62,0.6); }
+  #join input:focus { box-shadow: 0 0 12px rgba(46,139,62,0.5); }
   #join button { width: 280px; padding: 13px;
                  background: rgba(0,20,0,0.7); color: var(--accent); border: 1px solid var(--accent);
-                 font-size: 14px; font-weight: 700; cursor: pointer;
+                 font-size: 19px; font-weight: 700; cursor: pointer;
                  text-transform: uppercase; letter-spacing: 3px;
                  font-family: inherit; transition: 0.15s; }
   #join button:hover { background: var(--accent); color: #000;
-                        box-shadow: 0 0 18px rgba(0,255,65,0.7); }
+                        box-shadow: 0 0 18px rgba(46,139,62,0.7); }
 
   /* ===== CHAT SCREEN (clean, no rain) ===== */
   #header { background: var(--panel); padding: 12px 16px;
             display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid var(--border); flex-shrink: 0;
             text-transform: uppercase; letter-spacing: 1px; }
-  #header h1 { font-size: 15px; font-weight: 400; color: var(--accent);
-               text-shadow: 0 0 6px rgba(0,255,65,0.6); }
+  #header h1 { font-size: 20px; font-weight: 400; color: var(--accent);
+               text-shadow: 0 0 6px rgba(46,139,62,0.6); }
   #header h1 .blink { animation: blink 1.2s steps(1) infinite; }
-  #status { font-size: 11px; color: var(--muted); }
-  #status.on { color: var(--bright); text-shadow: 0 0 6px rgba(204,255,204,0.7); }
+  #status { font-size: 15px; color: var(--muted); }
+  #status.on { color: var(--bright); text-shadow: 0 0 6px rgba(159,217,159,0.7); }
   @keyframes blink { 50% { opacity: 0; } }
 
   #chat { display: none; flex-direction: column; flex: 1; overflow: hidden; background: var(--bg); }
   #messages { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex;
-              flex-direction: column; gap: 3px; font-size: 14px; }
+              flex-direction: column; gap: 3px; font-size: 19px; }
   .msg { line-height: 1.5; word-break: break-word; padding: 1px 0; }
   .msg .tag { color: var(--muted); }
   .msg.me .name { color: var(--bright); font-weight: 700; }
@@ -98,18 +99,18 @@ HTML_PAGE = """<!DOCTYPE html>
   .msg.them .name { color: var(--accent); font-weight: 700; }
   .msg.them .body { color: var(--text); }
   .msg.server { color: var(--server); font-style: italic; }
-  .msg .time { color: var(--muted); font-size: 11px; }
+  .msg .time { color: var(--muted); font-size: 15px; }
 
   #inputbar { background: var(--panel); padding: 10px 12px;
               padding-bottom: max(10px, env(safe-area-inset-bottom));
               display: flex; gap: 8px; border-top: 1px solid var(--border);
               flex-shrink: 0; align-items: center; }
-  #inputbar .prompt { color: var(--accent); font-size: 16px; }
+  #inputbar .prompt { color: var(--accent); font-size: 20px; }
   #inputbar input { flex: 1; padding: 10px 8px; background: transparent;
-                    border: none; color: var(--bright); font-size: 15px; outline: none;
+                    border: none; color: var(--bright); font-size: 19px; outline: none;
                     font-family: inherit; caret-color: var(--accent); }
   #inputbar button { padding: 10px 16px; background: var(--dim); color: var(--accent);
-                     border: 1px solid var(--accent); font-size: 13px;
+                     border: 1px solid var(--accent); font-size: 16px;
                      text-transform: uppercase; letter-spacing: 1px;
                      cursor: pointer; white-space: nowrap; font-family: inherit; }
   #inputbar button:hover { background: var(--accent); color: #000; }
@@ -124,16 +125,15 @@ HTML_PAGE = """<!DOCTYPE html>
 <div id="join">
   <canvas id="matrixCanvas"></canvas>
   <div class="overlay">
-    <div class="ascii">WAKE UP...</div>
-    <label>ENTER YOUR NAME</label>
-    <input id="nameInput" placeholder="neo" maxlength="32" autocomplete="off">
-    <button onclick="joinChat()">&gt; ENTER THE MATRIX</button>
+    <label>ENTER NAME</label>
+    <input id="nameInput" placeholder="" maxlength="32" autocomplete="off">
+    <button onclick="joinChat()">&gt; CONNECT</button>
   </div>
 </div>
 
 <div id="chat">
   <div id="header">
-    <h1>[ THE_MATRIX // CHAT<span class="blink">_</span> ]</h1>
+    <h1>[ TERMINAL // CHAT<span class="blink">_</span> ]</h1>
     <span id="status">○ OFFLINE</span>
   </div>
   <div id="messages"></div>
@@ -164,20 +164,38 @@ function startMatrixRain() {
   const chars = "アイウエオカキクケコサシスセソタチツテト0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const fontSize = 16;
   let columns = Math.floor(canvas.width / fontSize);
-  let drops = new Array(columns).fill(1);
+  // Each column gets its own starting offset and fixed speed so the
+  // rain reads as a steady, continuous flow rather than a flicker.
+  let drops = [];
+  for (let i = 0; i < columns; i++) {
+    drops.push({
+      y: Math.random() * -40,                 // staggered start
+      speed: 0.35 + Math.random() * 0.25,      // constant per-column speed
+      glyph: chars[Math.floor(Math.random() * chars.length)],
+      changeTimer: Math.random() * 20
+    });
+  }
 
   function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.06)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#00ff41";
+    ctx.fillStyle = "rgba(46, 139, 62, 0.65)"; // dimmer, muted green
     ctx.font = fontSize + "px monospace";
+
     for (let i = 0; i < drops.length; i++) {
-      const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
+      const d = drops[i];
+      ctx.fillText(d.glyph, i * fontSize, d.y * fontSize);
+
+      d.y += d.speed;
+      d.changeTimer -= 1;
+      if (d.changeTimer <= 0) {
+        d.glyph = chars[Math.floor(Math.random() * chars.length)];
+        d.changeTimer = 15 + Math.random() * 15;
       }
-      drops[i]++;
+      if (d.y * fontSize > canvas.height + 40) {
+        d.y = Math.random() * -10;            // smooth wraparound, no flicker
+        d.speed = 0.35 + Math.random() * 0.25;
+      }
     }
     rainAnimationId = requestAnimationFrame(draw);
   }
@@ -206,7 +224,7 @@ function joinChat() {
   document.getElementById("status").className = "on";
   document.getElementById("msgInput").focus();
   fetch("/send", {method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({username: "Server", text: `*** ${username} has entered the Matrix ***`})});
+    body: JSON.stringify({username: "Server", text: `*** ${username} has connected ***`})});
   startPolling();
 }
 
