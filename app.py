@@ -32,63 +32,63 @@ HTML_PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CHANNEL</title>
+<title>THE_MATRIX // CHAT</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0a0e0a; --panel: #0d1410; --accent: #33ff66;
-    --dim: #1c2e1f; --text: #c8ffd4; --muted: #4a7a55;
-    --bright: #66ffaa; --entry: #0d1410; --border: #1f3d28;
-    --server: #ffb347; --warn: #ff5566;
+    --bg: #000000; --panel: #050a05; --accent: #00ff41;
+    --dim: #0d1f0d; --text: #aaffaa; --muted: #2f7a3f;
+    --bright: #ccffcc; --entry: #050a05; --border: #134d13;
+    --server: #ffcc66; --warn: #ff3344;
   }
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-  body { background: var(--bg); color: var(--text);
+  html, body { background: var(--bg); color: var(--text);
          font-family: 'Share Tech Mono', 'Courier New', monospace;
-         height: 100dvh; display: flex; flex-direction: column;
-         position: relative; overflow: hidden; }
-  /* scanline / crt overlay */
-  body::before {
-    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 999;
-    background: repeating-linear-gradient(
-      0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px,
-      rgba(0,0,0,0.18) 2px, rgba(0,0,0,0.18) 3px
-    );
-    mix-blend-mode: multiply;
-  }
-  body::after {
-    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 998;
-    background: radial-gradient(ellipse at center, rgba(51,255,102,0.04) 0%, rgba(0,0,0,0.35) 100%);
-  }
+         height: 100dvh; width: 100%; overflow: hidden; }
+  body { display: flex; flex-direction: column; position: relative; }
+
+  /* ===== JOIN SCREEN (with code rain) ===== */
+  #join { display: flex; flex-direction: column; align-items: center;
+          justify-content: center; flex: 1; gap: 16px; padding: 24px;
+          position: relative; overflow: hidden; }
+  #matrixCanvas { position: absolute; inset: 0; width: 100%; height: 100%;
+                  z-index: 0; }
+  #join .overlay { position: relative; z-index: 2; display: flex;
+                    flex-direction: column; align-items: center; gap: 14px;
+                    background: rgba(0,0,0,0.55); padding: 32px 28px;
+                    border: 1px solid var(--border); backdrop-filter: blur(1px); }
+  #join .ascii { color: var(--accent); font-size: 11px; line-height: 1.3;
+                 white-space: pre; text-align: center;
+                 text-shadow: 0 0 8px rgba(0,255,65,0.8); }
+  #join label { color: var(--muted); font-size: 12px; text-transform: uppercase;
+                letter-spacing: 3px; align-self: flex-start; }
+  #join input { width: 280px; padding: 12px 14px;
+                background: rgba(0,0,0,0.6); border: 1px solid var(--accent);
+                color: var(--bright); font-size: 15px; outline: none;
+                font-family: inherit; caret-color: var(--accent);
+                text-shadow: 0 0 4px rgba(0,255,65,0.6); }
+  #join input:focus { box-shadow: 0 0 12px rgba(0,255,65,0.5); }
+  #join button { width: 280px; padding: 13px;
+                 background: rgba(0,20,0,0.7); color: var(--accent); border: 1px solid var(--accent);
+                 font-size: 14px; font-weight: 700; cursor: pointer;
+                 text-transform: uppercase; letter-spacing: 3px;
+                 font-family: inherit; transition: 0.15s; }
+  #join button:hover { background: var(--accent); color: #000;
+                        box-shadow: 0 0 18px rgba(0,255,65,0.7); }
+
+  /* ===== CHAT SCREEN (clean, no rain) ===== */
   #header { background: var(--panel); padding: 12px 16px;
             display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid var(--border); flex-shrink: 0;
             text-transform: uppercase; letter-spacing: 1px; }
   #header h1 { font-size: 15px; font-weight: 400; color: var(--accent);
-               text-shadow: 0 0 6px rgba(51,255,102,0.6); }
+               text-shadow: 0 0 6px rgba(0,255,65,0.6); }
   #header h1 .blink { animation: blink 1.2s steps(1) infinite; }
   #status { font-size: 11px; color: var(--muted); }
-  #status.on { color: var(--bright); text-shadow: 0 0 6px rgba(102,255,170,0.7); }
+  #status.on { color: var(--bright); text-shadow: 0 0 6px rgba(204,255,204,0.7); }
   @keyframes blink { 50% { opacity: 0; } }
 
-  #join { display: flex; flex-direction: column; align-items: center;
-          justify-content: center; flex: 1; gap: 14px; padding: 24px; z-index: 1; }
-  #join .ascii { color: var(--dim); font-size: 10px; line-height: 1.1; white-space: pre;
-                 color: var(--muted); margin-bottom: 8px; text-align: center; }
-  #join label { color: var(--muted); font-size: 12px; text-transform: uppercase;
-                letter-spacing: 2px; align-self: flex-start; margin-left: calc(50% - 160px); }
-  #join input { width: 100%; max-width: 320px; padding: 12px 14px;
-                background: var(--entry); border: 1px solid var(--border);
-                color: var(--bright); font-size: 15px; outline: none;
-                font-family: inherit; caret-color: var(--accent); }
-  #join input:focus { border-color: var(--accent); box-shadow: 0 0 8px rgba(51,255,102,0.3); }
-  #join button { width: 100%; max-width: 320px; padding: 12px;
-                 background: var(--dim); color: var(--accent); border: 1px solid var(--accent);
-                 font-size: 14px; font-weight: 700; cursor: pointer;
-                 text-transform: uppercase; letter-spacing: 2px;
-                 font-family: inherit; transition: 0.15s; }
-  #join button:hover { background: var(--accent); color: var(--bg); }
-
-  #chat { display: none; flex-direction: column; flex: 1; overflow: hidden; z-index: 1; }
+  #chat { display: none; flex-direction: column; flex: 1; overflow: hidden; background: var(--bg); }
   #messages { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex;
               flex-direction: column; gap: 3px; font-size: 14px; }
   .msg { line-height: 1.5; word-break: break-word; padding: 1px 0; }
@@ -112,7 +112,7 @@ HTML_PAGE = """<!DOCTYPE html>
                      border: 1px solid var(--accent); font-size: 13px;
                      text-transform: uppercase; letter-spacing: 1px;
                      cursor: pointer; white-space: nowrap; font-family: inherit; }
-  #inputbar button:hover { background: var(--accent); color: var(--bg); }
+  #inputbar button:hover { background: var(--accent); color: #000; }
 
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-thumb { background: var(--border); }
@@ -120,40 +120,93 @@ HTML_PAGE = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<div id="header">
-  <h1>[ CHANNEL<span class="blink">_</span> ]</h1>
-  <span id="status">○ OFFLINE</span>
-</div>
+
 <div id="join">
-  <div class="ascii">═══════════════════════════
-═══════════════════════════</div>
-  <input id="nameInput" placeholder="enter name..." maxlength="32" autocomplete="off">
-  <button onclick="joinChat()">&gt; CONNECT</button>
+  <canvas id="matrixCanvas"></canvas>
+  <div class="overlay">
+    <div class="ascii">WAKE UP...</div>
+    <label>ENTER YOUR NAME</label>
+    <input id="nameInput" placeholder="neo" maxlength="32" autocomplete="off">
+    <button onclick="joinChat()">&gt; ENTER THE MATRIX</button>
+  </div>
 </div>
+
 <div id="chat">
+  <div id="header">
+    <h1>[ THE_MATRIX // CHAT<span class="blink">_</span> ]</h1>
+    <span id="status">○ OFFLINE</span>
+  </div>
   <div id="messages"></div>
   <div id="inputbar">
     <span class="prompt">&gt;</span>
-    <input id="msgInput" placeholder="..." autocomplete="off" autocorrect="off">
+    <input id="msgInput" placeholder="transmit message..." autocomplete="off" autocorrect="off">
     <button onclick="sendMsg()">SEND</button>
   </div>
 </div>
+
 <script>
 let username = "";
 let lastCount = 0;
 let polling = false;
+let rainAnimationId = null;
 
+/* ---- Matrix code rain (join screen only) ---- */
+function startMatrixRain() {
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  const chars = "アイウエオカキクケコサシスセソタチツテト0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const fontSize = 16;
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = new Array(columns).fill(1);
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00ff41";
+    ctx.font = fontSize + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+    rainAnimationId = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+function stopMatrixRain() {
+  if (rainAnimationId) {
+    cancelAnimationFrame(rainAnimationId);
+    rainAnimationId = null;
+  }
+}
+
+startMatrixRain();
+
+/* ---- Chat logic ---- */
 function joinChat() {
   const n = document.getElementById("nameInput").value.trim();
   if (!n) return;
   username = n;
+
+  stopMatrixRain();
   document.getElementById("join").style.display = "none";
   document.getElementById("chat").style.display = "flex";
-  document.getElementById("status").textContent = username.toUpperCase();
+  document.getElementById("status").textContent = "● LINK ESTABLISHED // " + username.toUpperCase();
   document.getElementById("status").className = "on";
   document.getElementById("msgInput").focus();
   fetch("/send", {method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({username: "Server", text: `*** ${username} has joined the channel ***`})});
+    body: JSON.stringify({username: "Server", text: `*** ${username} has entered the Matrix ***`})});
   startPolling();
 }
 
