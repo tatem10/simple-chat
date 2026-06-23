@@ -41,9 +41,9 @@ HTML_PAGE = """<!DOCTYPE html>
     --bright: #9fd99f; --entry: #060a06; --border: #14361a;
     --server: #c9a85a; --warn: #b94b4b;
   }
-  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
   html, body { background: var(--bg); color: var(--text);
-         font-family: 'VT323', 'Courier New', monospace;
+         font-family: 'DotGothic16', 'Courier New', monospace;
          height: 100dvh; width: 100%; overflow: hidden; }
   body { display: flex; flex-direction: column; position: relative; }
 
@@ -66,7 +66,7 @@ HTML_PAGE = """<!DOCTYPE html>
   #join input { width: 280px; padding: 12px 14px;
                 background: rgba(0,0,0,0.6); border: 1px solid var(--accent);
                 color: var(--bright); font-size: 22px; outline: none;
-                font-family: inherit; caret-color: var(--accent);
+                font-family: inherit; caret-color: transparent;
                 text-shadow: 0 0 4px rgba(46,139,62,0.6); }
   #join input:focus { box-shadow: 0 0 12px rgba(46,139,62,0.5); }
   #join button { width: 280px; padding: 13px;
@@ -108,7 +108,23 @@ HTML_PAGE = """<!DOCTYPE html>
   #inputbar .prompt { color: var(--accent); font-size: 20px; }
   #inputbar input { flex: 1; padding: 10px 8px; background: transparent;
                     border: none; color: var(--bright); font-size: 19px; outline: none;
-                    font-family: inherit; caret-color: var(--accent); }
+                    font-family: inherit; caret-color: transparent; }
+
+  /* ---- Blocky terminal-style cursor ---- */
+  .input-wrap { position: relative; display: inline-flex; align-items: center; }
+  .input-wrap input { width: 100%; }
+  .block-cursor {
+    position: absolute; top: 50%; left: 0;
+    width: 0.62em; height: 1.15em;
+    transform: translateY(-50%);
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(46,139,62,0.8);
+    pointer-events: none;
+    animation: cursorBlink 1s steps(1) infinite;
+    display: none;
+  }
+  .block-cursor.active { display: block; }
+  @keyframes cursorBlink { 50% { opacity: 0; } }
   #inputbar button { padding: 10px 16px; background: var(--dim); color: var(--accent);
                      border: 1px solid var(--accent); font-size: 16px;
                      text-transform: uppercase; letter-spacing: 1px;
@@ -126,7 +142,10 @@ HTML_PAGE = """<!DOCTYPE html>
   <canvas id="matrixCanvas"></canvas>
   <div class="overlay">
     <label>ENTER NAME</label>
-    <input id="nameInput" placeholder="" maxlength="32" autocomplete="off">
+    <div class="input-wrap">
+      <input id="nameInput" placeholder="" maxlength="32" autocomplete="off" spellcheck="false">
+      <span class="block-cursor" id="nameCursor"></span>
+    </div>
     <button onclick="joinChat()">&gt; CONNECT</button>
   </div>
 </div>
@@ -139,7 +158,10 @@ HTML_PAGE = """<!DOCTYPE html>
   <div id="messages"></div>
   <div id="inputbar">
     <span class="prompt">&gt;</span>
-    <input id="msgInput" placeholder="transmit message..." autocomplete="off" autocorrect="off">
+    <div class="input-wrap" style="flex:1;">
+      <input id="msgInput" placeholder="type a message..." autocomplete="off" autocorrect="off" spellcheck="false">
+      <span class="block-cursor" id="msgCursor"></span>
+    </div>
     <button onclick="sendMsg()">SEND</button>
   </div>
 </div>
@@ -149,6 +171,38 @@ let username = "";
 let lastCount = 0;
 let polling = false;
 let rainAnimationId = null;
+
+/* ---- Blocky terminal-style cursor positioning ---- */
+function setupBlockCursor(inputId, cursorId) {
+  const input = document.getElementById(inputId);
+  const cursor = document.getElementById(cursorId);
+
+  // Hidden span used to measure text width with the same font as the input
+  const measurer = document.createElement("span");
+  const cs = getComputedStyle(input);
+  measurer.style.font = cs.font;
+  measurer.style.letterSpacing = cs.letterSpacing;
+  measurer.style.position = "absolute";
+  measurer.style.visibility = "hidden";
+  measurer.style.whiteSpace = "pre";
+  document.body.appendChild(measurer);
+
+  function reposition() {
+    const caretPos = input.selectionStart || 0;
+    measurer.textContent = input.value.slice(0, caretPos);
+    const offsetX = measurer.getBoundingClientRect().width;
+    const paddingLeft = parseFloat(cs.paddingLeft) || 0;
+    cursor.style.left = (paddingLeft + offsetX) + "px";
+  }
+
+  input.addEventListener("input", reposition);
+  input.addEventListener("keyup", reposition);
+  input.addEventListener("click", reposition);
+  input.addEventListener("focus", () => { cursor.classList.add("active"); reposition(); });
+  input.addEventListener("blur", () => { cursor.classList.remove("active"); });
+
+  reposition();
+}
 
 /* ---- Matrix code rain (join screen only) ---- */
 function startMatrixRain() {
@@ -292,6 +346,9 @@ function addMessage(msg) {
 
 document.getElementById("nameInput").addEventListener("keydown", e => { if (e.key === "Enter") joinChat(); });
 document.getElementById("msgInput").addEventListener("keydown", e => { if (e.key === "Enter") sendMsg(); });
+
+setupBlockCursor("nameInput", "nameCursor");
+setupBlockCursor("msgInput", "msgCursor");
 </script>
 </body>
 </html>"""
